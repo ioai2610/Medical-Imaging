@@ -108,10 +108,10 @@ im_log_2=log(I0_2)-log(newP_2); % image (all that's attenuated)
 figure;
 subplot(1,2,1);
 imagesc(im_log_1);
-%colormap(gray);
+colormap(gray);
 subplot(1,2,2);
 imagesc(im_log_2);
-%colormap(gray);
+colormap(gray);
 figure.Position = [100 100 550 400];
 set(gcf,'Name', 'Log image - Irving Orlando Ayala Iturbe', ...
     'NumberTitle','off', ...
@@ -144,8 +144,8 @@ clear i muElement2 muElement1
 % M = [a11 a12;b21 b22]
 
 a11 = muElement1_E1/rhoElement1;
-a12 = muElement2_E1/rhoElement2;
-b21 = muElement1_E2/rhoElement1;
+b21 = muElement2_E1/rhoElement2; % b21
+a12 = muElement1_E2/rhoElement1; % a12
 b22 = muElement2_E2/rhoElement2;
 M = [a11 a12 ;b21 b22];
 M = inv(M); % Computing inverse
@@ -159,25 +159,52 @@ for n=1:length(im_log_1)
     end
 end
 
+%% 2nd Solving the linear system 
+
+% for n=1:length(im_log_1)
+%     for m=1:length(im_log_1)
+%         C_1(n,m) = M(1,1)*im_log_1(n,m) + M(1,2)*im_log_2(n,m);
+%         C_2(n,m) = M(2,1)*im_log_1(n,m) + M(2,2)*im_log_2(n,m);
+%     end
+% end
+
+%% 3rd Solving the linear system 
+
+% for n=1:length(im_log_1)
+%     for m=1:length(im_log_1)
+%         c_11(n,m) = M(1,:)'\[im_log_1(n,m), im_log_2(n,m)]';
+%         c_22(n,m) = M(2,:)'\[im_log_1(n,m), im_log_2(n,m)]';
+%     end
+% end
+
+%% 4th Solving the linear system 
+
+% C_222 = (im_log_2*a11-im_log_1*b21)/(a11*b22-a12*b21);
+% C_111 = im_log_1*b22 - im_log_2*a12 - (2*im_log_1*a12*b21/a11);
 %% Plotting C's
 
-figure;
+fig = figure;
+h = axes(fig,'visible','off'); 
 subplot(1,2,1);
 imagesc(C1);
-%colorbar('southoutside');
 colormap("gray");
 subplot(1,2,2);
 imagesc(C2);
-%colorbar('southoutside');
+c = colorbar(h,'Position',[0.95 0.168 0.022 0.7],'Ticks',[0, 1], ...
+    'TickLabels',{'Water','Bone'}'); 
 colormap("gray");
 figure.Position = [100 100 550 400];
 set(gcf,'Name', '2D Comparison - Irving Orlando Ayala Iturbe', ...
     'NumberTitle','off', ...
     'Position',  [100, 100, 1000, 400]); % graph size
 
-%%
+%% Profiles plotting
+
 per1 = C1(50,:);
-plot(per1,'--');
+plot(per1,'--','MarkerSize',10);
 hold on
 per2 = C2(50,:);
-plot(per2,'.');
+plot(per2,':r','MarkerSize',10);
+
+%% 
+
